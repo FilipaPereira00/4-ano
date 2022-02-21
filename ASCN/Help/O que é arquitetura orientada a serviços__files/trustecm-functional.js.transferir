@@ -1,0 +1,11 @@
+/**
+ * TRUSTe Consent Manager API functional script.
+ */
+
+// Process functional embeds.
+var elements = document.getElementsByClassName('trustecm-embed__functional');
+if (typeof trustecmProcessEmbeds === 'function') {
+  trustecmProcessEmbeds(elements);
+} else {
+  console.log('Missing "trustecmProcessEmbeds()" function.');
+}

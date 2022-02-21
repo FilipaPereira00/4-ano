@@ -1,0 +1,11 @@
+/**
+ * TRUSTe Consent Manager API advertising script.
+ */
+
+// Process advertising embeds.
+var elements = document.getElementsByClassName('trustecm-embed__advertising');
+if (typeof trustecmProcessEmbeds === 'function') {
+  trustecmProcessEmbeds(elements);
+} else {
+  console.log('Missing "trustecmProcessEmbeds()" function.');
+}
