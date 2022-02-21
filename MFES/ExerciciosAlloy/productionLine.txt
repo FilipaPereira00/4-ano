@@ -1,0 +1,72 @@
+pred inv1 {
+	// Workers are either human or robots
+    Worker in (Robot+Human)
+    //all w : Worker | w in (Robot + Human)
+
+}
+
+pred inv2 {
+	// Every workstation has workers and every worker works in one workstation
+  
+    all ws : Workstation | some (ws.workers)
+
+    all w : Worker | one (w.~workers)
+}
+
+
+pred inv3 {
+	// Every component is assembled in one workstation
+    all c : Component | one (c.workstation)
+
+}
+
+
+pred inv4 {
+	// Components must have parts and materials have no parts
+    all m : Material | no (m.parts)
+    all c : Component |some (c.parts)
+    
+}
+
+pred inv5 {
+	// Humans and robots cannot work together
+    no (Robot.~workers & Human.~workers)
+   
+}
+
+pred inv6 {
+	// Components cannot be their own parts
+    all c : Component | c not in c.^(parts)
+  
+}
+
+
+pred inv7 {
+	// Components built of dangerous parts are also dangerous
+    //all c : Component , p : c.^(parts) | p in Dangerous implies c in Dangerous
+     all p : Product | p in Dangerous implies p.^(~parts) in Dangerous
+}
+
+
+
+pred inv8 {
+	// Dangerous components cannot be assembled by humans
+     all c : Component | c in Dangerous implies (c.workstation).workers not in Human
+
+}
+
+
+pred inv9 {
+	// The workstations form a single line between begin and end
+       all w : Workstation | w in begin implies Workstation-{w} in w.^(succ)
+       all w : Workstation | w not in w.^(succ)
+       all w : Workstation | w not in end iff one w.succ
+
+}
+
+
+pred inv10 {
+	// The parts of a component must be assembled before it in the production line
+    all c: Component| (c.^(~parts)).workstation in (c.workstation).^(succ)
+
+}

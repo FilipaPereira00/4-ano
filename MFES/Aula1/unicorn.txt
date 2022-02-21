@@ -1,0 +1,16 @@
+c The Unicorn puzzle
+c
+c 1 mythical? M
+c 2 immortal? I
+c 3 mammal?   A
+c 4 horned?   H
+c 5 magical?  G
+c
+p cnf 5 7
+-1 2 0
+1 -2 0
+1 3 0
+-2 4 0
+-3 4 0
+-4 5 0
+-4 0

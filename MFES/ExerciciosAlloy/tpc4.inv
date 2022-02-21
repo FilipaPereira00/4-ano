@@ -1,0 +1,151 @@
+abstract sig Status {}
+
+one sig Visited , Unvisited extends Status {}
+
+sig Vertice { 
+
+edge : set Aresta
+
+}
+
+
+var sig VerticeInicial in Vertice {}
+
+var sig VerticeAtual in Vertice {}
+
+
+sig Aresta {
+
+vertDest : one Vertice ,
+
+var status : one Status
+
+}
+
+
+fact Init {
+
+
+           ﻿no VerticeAtual
+
+
+           ﻿﻿﻿﻿﻿﻿no VerticeInicial
+
+
+           ﻿﻿﻿//all nodes have an even degree
+
+  ﻿﻿﻿          ﻿﻿﻿all v : Vertice | rem[#v.edge,2] = 0
+
+
+
+           ﻿﻿﻿﻿//each pair of nodes only has one edge (in each direction)
+
+            ﻿﻿﻿all a1 , a2 : Aresta | (a1.vertDest = a2.vertDest and a1.~edge = a2.~edge) implies a1=a2
+
+
+           ﻿﻿//edge has only one "starting" node
+
+            ﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿all a : Aresta | one a.~edge
+
+
+          ﻿ ﻿// no self loops 
+
+            ﻿﻿﻿﻿﻿all a : Aresta | a.vertDest != a.~edge
+
+
+           ﻿// complete graph﻿
+
+           ﻿﻿﻿all v1 :Vertice, v2 : Vertice-v1 | v2 in v1.edge.vertDest
+
+
+
+           ﻿﻿﻿﻿﻿// all nodes are unvisited   
+
+
+             Aresta.status = Unvisited
+
+
+}
+
+pred inicia[v : Vertice] {   
+
+
+
+           ﻿// guard          
+
+﻿           ﻿﻿﻿﻿﻿n﻿﻿﻿﻿﻿o VerticeInicial    ﻿
+
+           ﻿﻿﻿no VerticeAtual 
+
+           ﻿﻿﻿﻿﻿Aresta.status = Unvisited       
+
+
+
+          ﻿//effect     
+
+          ﻿VerticeInicial' = v     
+
+          ﻿﻿VerticeAtual' = v               
+
+
+
+        ﻿﻿ ﻿//frame conditions   
+
+         ﻿﻿﻿﻿﻿﻿﻿﻿﻿status' = status    
+
+}
+
+
+
+pred travessia [a:Aresta] {   
+
+      ﻿﻿﻿﻿﻿﻿﻿﻿﻿// guard     
+
+     ﻿﻿﻿﻿﻿   ﻿﻿﻿﻿one VerticeInicial     
+
+     ﻿﻿﻿﻿﻿   ﻿﻿﻿﻿one VerticeAtual     
+
+     ﻿﻿﻿﻿﻿﻿   ﻿﻿﻿﻿a.status = Unvisited      
+
+     ﻿﻿﻿﻿﻿   ﻿﻿﻿a in VerticeAtual.edge           
+
+     
+
+      ﻿﻿﻿﻿﻿﻿//effect     
+
+      ﻿﻿﻿﻿﻿﻿ ﻿a.status' = Visited     
+
+       ﻿﻿﻿﻿﻿﻿﻿VerticeAtual' = a.vertDest        
+
+       ﻿﻿all a1 : Aresta - a | (a1.vertDest = a.~edge and a1.~edge = a.vertDest) implies a1.status' = Visited                                   
+
+    
+
+     ﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿// ﻿frame conditions     
+
+      ﻿﻿﻿﻿﻿﻿all a1 : Aresta - a  | (a1.vertDest  != a.~edge or a1.~edge != a.vertDest) implies a1.status' = a1.status          
+
+       ﻿﻿﻿﻿﻿﻿﻿VerticeInicial' = VerticeInicial           
+
+}
+
+pred nop { 
+
+   ﻿﻿﻿status' = status 
+
+   ﻿﻿﻿VerticeAtual' = ﻿﻿﻿﻿VerticeAtual 
+
+   ﻿﻿﻿﻿VerticeInicial' = VerticeInicial  
+
+}
+
+
+ fact Traces {  
+
+      ﻿﻿﻿﻿﻿﻿always (nop or some v : Vertice | inicia[v] or some a : Aresta | travessia[a])
+
+   ﻿﻿﻿}
+
+
+
+run ex {} for exactly 5 Vertice , exactly 20 Aresta

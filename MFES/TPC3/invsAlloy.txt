@@ -1,0 +1,63 @@
+sig Hash {}
+abstract sig Object {
+	hash : one Hash
+}
+
+sig Blob extends Object {}
+
+sig Name {}
+sig Tree extends Object {
+	objects : Hash -> Name
+}
+
+sig Commit extends Object {
+	tree : one Hash,
+	parent : set Hash
+}
+
+pred Invs {
+  
+  //One
+  all t : Tree , n : Name | lone (t.objects.Name & t.objects.n)
+  
+   //alternative
+  //all t : Tree , n : Name , h,h1 : Hash | (n in h1.(t.objects) and n in h.(t.objects)) implies h=h1
+  
+  
+  //Two
+  all o,o1 : Object | (o.hash = o1.hash) implies o1=o 
+   
+  
+  
+  //Three.one
+   all t: Tree | t.objects.Name in (Blob + Tree).hash
+   //alternative
+    
+    
+  //Three.two
+    all c : Commit | c.tree in Tree.hash
+  
+  //Three.three
+    all c : Commit | c.parent in Commit.hash
+  
+  
+  //four.one
+  all c : Commit | c not in c.^(parent.~hash)
+  //four.two
+
+  all  t : Tree | t not in t.^(objects.Name.~hash)
+  
+  
+  //five.one
+  
+  all t , t1: Tree | hash.(t.objects) = hash.(t1.objects) implies t = t1
+  
+  //five.two
+  all c1 , c2 : Commit | hash.(c1.tree) = hash.(c2.tree) and hash.(c1.parent) = hash.(c2.parent) implies c1 = c2
+
+
+
+}
+
+
+

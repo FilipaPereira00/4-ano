@@ -1,0 +1,125 @@
+pred inv1 {
+	// Only students can be enrolled in courses
+    all c : Course | enrolled.c in Student
+ 
+    // ou
+    enrolled.Course in Student
+ 
+}
+
+
+pred inv2 {
+	// Only professors can teach courses
+    all c : Course | teaches.c in Professor
+        
+       // ou 
+       teaches.Course in Professor
+}
+
+
+
+
+pred inv3 {
+	// Courses must have teachers
+    all c : Course | some teaches.c
+
+}
+
+pred inv4 {
+	// Projects are proposed by one course
+     //all p : Project | one c : Course | p in c.projects
+   all p : Project | one (Course :> projects.p)
+    
+    
+}
+
+pred inv5 {
+	// Only students work on projects and 
+    // projects must have someone working on them
+	
+    all p : Project | some (Person :> projects.p)
+  
+    
+    (Person :> projects.Project) in Student
+    
+  
+}
+
+
+pred inv6 {
+	// Students only work on projects of courses they are enrolled in
+    all s : Student | s.projects in (s.enrolled.projects)
+   
+  
+}
+
+
+pred inv7 {
+	// Students work on at most one project per course
+  
+    all s : Student , c:Course | lone (s.projects & c.projects)
+    
+    
+
+} 
+
+
+pred inv8 {
+	// A professor cannot teach herself
+    all t : Professor | t not in (enrolled.(t.teaches))
+     
+     //alternative
+    //all p : Professor | no p.teaches & p.enrolled
+}
+
+
+pred inv9 {
+	// A professor cannot teach colleagues
+    all t : Professor | no (t.teaches.~enrolled) & ((t.teaches).~teaches)
+}
+
+
+pred inv10 {
+	// Only students have grades
+    all c : Course | (c.grades.Grade) in Student
+        // 
+         Course.grades.Grade in Student
+
+}
+
+pred inv11 {
+	// Students only have grades in courses they are enrolled
+   all c : Course | c.grades.Grade in (c.~enrolled)
+    
+
+}
+
+pred inv12 {
+	// Students have at most one grade per course
+    all s : Student , c : Course | lone (s.(c.grades))
+
+}
+
+pred inv13 {
+	// A student with the highest mark in a course must have worked on a project on that course
+    all c : Course | c.grades.last in ((c.projects).~projects)
+
+}
+
+
+pred inv14 {
+	// A student cannot work with the same student in different projects
+   all s,s1 : Student | s!=s1 implies lone (s.projects & s1.projects) 
+}
+
+
+pred inv15 {
+	// Students working on the same project in a course cannot have marks differing by more than one unit
+     
+      //*** alternativa 1 *****
+    //all s,s1 : Student , p : (s.projects & s1.projects) , g :s.((Course :>projects.p).grades) , g1: s1.   ((Course :>projects.p).grades) | g = g1 or g1=prev[g] or g=prev[g1] 
+  
+    
+    all p : Project , g,g1 : (projects.p).(projects.p.grades) | g = g1 or g1=prev[g] or g=prev[g1] 
+  
+} 
