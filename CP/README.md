@@ -1,2 +1,3 @@
 Trabalho realizado no âmbito da disciplina de Computação Paralela.
-Final Grade : 16
+
+* Nota Final do Projeto : 16
